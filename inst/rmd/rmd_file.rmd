@@ -1,0 +1,24 @@
+---
+title: "Variables found within files"
+output: 
+  html_document: 
+    highlight: default
+    theme: spacelab
+params:
+  files: "no files"
+  res: "no match"
+---
+
+```{r, echo = FALSE, results = 'asis'}
+# print results from files
+purrr::walk2(params$files, params$res, function(x, y) {
+  a <- paste("####", " ", x, "\n")
+  cat(a)
+  b <- paste(unlist(y), "\n")
+  cat(b)
+  cat("\n")
+})
+```
+
+
+

@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^README-.*\.png$
+^buildcode_filetools\.R$
+^testcode_filetools\.R$
+^testfiles$
+^future$
+^files\.html$

@@ -1,0 +1,18 @@
+Package: filetools
+Type: Package
+Title: Useful tools for files
+Version: 0.1.0
+Author: kristoffer Bäckman
+Maintainer: kristoffer Bäckman <kristoffer.backman@gmail.com>
+Description: Provides functions to work with statistics files.
+URL: http://github.com/thebackman/filetools
+BugReports: http://github.com/thebackman/filetools/issues
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: stringr,
+    purrr,
+    haven,
+    readr,
+    rmarkdown
+RoxygenNote: 6.0.1
