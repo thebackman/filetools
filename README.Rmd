@@ -60,6 +60,11 @@ find_vars_in_files(
   HTML_out = F)
 ```
 
+The output produced shows the number of files found in your target directory,
+the number of files in which a matching variable name was found,
+the name of the matched variables in each file and
+the first five observations for each matched variable.
+
 ### Details
 
 The HTML-file is called *files.html*. The search string is just a regular
