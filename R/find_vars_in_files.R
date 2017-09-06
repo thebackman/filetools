@@ -19,6 +19,8 @@ find_vars_in_files <- function(path = "",
                                searchstring = "",
                                HTML_out = F) {
 
+  # -- preprocess
+
   # does file folder exist
   if (dir.exists(path) == F) {
     stop("The folder does not seem to exist, check path", call. = F)
@@ -37,40 +39,58 @@ find_vars_in_files <- function(path = "",
     stop("No files found in folder", call. = F)
   }
 
-  # pick out names from each file
-  if (file_type == "sav") {
-    df_names <- purrr::map(files, function(x) {
-      tolower(names(haven::read_sav(x)))  # sav
-    })
-  } else {
-    df_names <- purrr::map(files, function(x) {
-      tolower(names(readr::read_csv2(x)))  # csv
-    })
-  }
+  # -- process files
 
-  # extract matched names from each file
+  # define search string
   regx <- paste0("^.*", searchstring, ".*$")
-  res <- purrr::map(df_names, extract_names, regx)
-  res <- purrr::map(res, function(x) {
-    if (identical(x, character(0)) == T) {
-      "no match"
+
+  # extract data, call helper functions
+  res <- purrr::map(files, function(x) {
+
+    df_in <- read_infile(x, file_type)
+    df_names <- tolower(names(df_in))
+    names_pos <- stringr::str_detect(df_names, regx)
+    names_found <- df_names[names_pos]
+
+    if (identical(names_found, character(0)) == T) {
+      NULL
     } else {
-      x
+      five <- extract_five(df_in, names_pos)
+      res <- list(x, names_found, five)
     }
   })
 
-  # present the results
-  message(stringr::str_pad("-", side = "right", width = 80, pad = "-"))
-  message(length(files), " files searched...", "\n")
-  purrr::walk2(files, res, function(x, y) {
-    message(x)
-    print(y)
-  })
-  message(stringr::str_pad("-", side = "right", width = 80, pad = "-"), "\n")
+  # remove empty list entries (files without matched variables)
+  res <- purrr::compact(res)
 
-  # write HTML
+  # -- present results
+
+  message(stringr::str_pad("-", side = "right", width = 80, pad = "-"))
+  message(length(files)," files searched,", " matches found in ", length(res), " files")
+  message(stringr::str_pad("-", side = "right", width = 42, pad = "-"))
+
+  # loop over results and print to console
+  if(length(res) == 0) {
+    message("no files")
+  } else {
+    purrr::walk(res, function(x) {
+      message(x[[1]], "\n")
+      message("matched variables with five first values:", "\n")
+      purrr::walk2(x[[2]], x[[3]], function(y, z) {
+        message(y)
+        print(z)
+      })
+      message(stringr::str_pad("-", side = "right", width = 80, pad = "-"))
+    })
+  }
+
+  # write HTML file
   if(HTML_out == T) {
-    message("HTML file files.html constructed")
-    cons_html(files, res)
+    if (length(res) == 0) {
+      message("no matches found, no HTML constructed")
+    } else {
+      message("HTML file files.html constructed")
+      cons_html(res)
+    }
   }
 }

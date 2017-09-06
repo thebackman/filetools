@@ -5,20 +5,19 @@ output:
     highlight: default
     theme: spacelab
 params:
-  files: "no files"
   res: "no match"
 ---
 
 ```{r, echo = FALSE, results = 'asis'}
-# print results from files
-purrr::walk2(params$files, params$res, function(x, y) {
-  a <- paste("####", " ", x, "\n")
-  cat(a)
-  b <- paste(unlist(y), "\n")
-  cat(b)
+purrr::walk(params$res, function(x) {
+  filename <- paste("####", " ", x[[1]], "\n")
+  cat(filename)
+  purrr::walk2(x[[2]], x[[3]], function(y, z) {
+    cat(paste0("**", y, "**", "\n"))
+    cat("\n")
+    cat(paste0("*", z, "*", "\n"))
+    cat("\n")
+  })
   cat("\n")
 })
 ```
-
-
-
